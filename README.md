@@ -1,2 +1,2 @@
-Mealpoints-visualizer
-=====================
+MEAL POINTS VISUALIZER
+======================
