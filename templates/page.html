@@ -1,0 +1,127 @@
+    <html>
+    	<head>
+    		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+    		<link rel = "stylesheet" href = "static/css/c3.min.css">
+    		<script type="text/javascript" src="static/js/c3.min.js"></script>
+    		<style type="text/css">
+				.bar {
+				  fill: steelblue;
+				}
+
+				.bar:hover {
+				  fill: brown;
+				}
+
+				.axis {
+				  font: 10px sans-serif;
+				}
+				.axis path,
+				.axis line {
+				  fill: none;
+				  stroke: #000;
+				  shape-rendering: crispEdges;
+				}
+
+				.x.axis path {
+				  display: none;
+				}
+
+    		</style>
+    	</head>
+    
+    	<body>
+    		<div id="chart" style="height: 500px"></div>
+    		<script type="text/javascript">
+				var chart = c3.generate({
+				    data: {
+				        x: 'x',
+				        xFormat: '%m/%d %I:%M %p', // 'xFormat' can be used as custom format of 'x'
+				        columns: [
+				            ['x',
+					            {% for dat in data %}
+					            	'{{dat[0]}}',
+					            {% endfor %}
+				            ],
+				            ['data1',
+				            	{% for dat in data %}
+				            		{{dat[3]}},
+				            	{% endfor %}
+				            ],
+				        ]
+				    },
+				    axis: {
+				        x: {
+				            type: 'timeseries',
+				            tick: {
+				                format: '%m/%d %I:%M %p',
+				                rotate: 75,
+            				    multiline: false
+				            }
+				        }
+				    }
+				});
+			</script>
+			<script type="text/javascript">
+				daysu = [
+					{% for entry in dateuse %}
+						{date:"{{entry[0]}}",value:{{entry[1]}} },
+					{% endfor %}
+				]
+
+				var margin = {top: 20, right: 20, bottom: 30, left: 40},
+				    width = 1200 - margin.left - margin.right,
+				    height = 250 - margin.top - margin.bottom;
+
+				var x = d3.scale.ordinal()
+				    .rangeRoundBands([0, width], .1);
+
+				var y = d3.scale.linear()
+				    .range([height, 0]);
+
+				var xAxis = d3.svg.axis()
+				    .scale(x)
+				    .orient("bottom");
+
+				var yAxis = d3.svg.axis()
+				    .scale(y)
+				    .orient("left")
+				    .ticks(10, "");
+
+				var svg = d3.select("body").append("svg")
+				    .attr("width", width + margin.left + margin.right)
+				    .attr("height", height + margin.top + margin.bottom)
+				  .append("g")
+				    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+				  x.domain(daysu.map(function(d) { return d.date; }));
+				  y.domain([0, d3.max(daysu, function(d) { return d.value; })]);
+
+				  svg.append("g")
+				      .attr("class", "x axis")
+				      .attr("transform", "translate(0," + height + ")")
+				      .call(xAxis);
+
+				  svg.append("g")
+				      .attr("class", "y axis")
+				      .call(yAxis)
+				    .append("text")
+				      .attr("transform", "rotate(-90)")
+				      .attr("y", 6)
+				      .attr("dy", ".71em")
+				      .style("text-anchor", "end")
+				      .text("value");
+
+				  svg.selectAll(".bar")
+				      .data(daysu)
+				    .enter().append("rect")
+				      .attr("class", "bar")
+				      .attr("x", function(d) { return x(d.date); })
+				      .attr("width", x.rangeBand())
+				      .attr("y", function(d) { return y(d.value); })
+				      .attr("height", function(d) { return height - y(d.value); });
+
+    		</script>
+
+    	</body>
+    
+    </html>
