@@ -3,7 +3,15 @@
     		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
     		<link rel = "stylesheet" href = "static/css/c3.min.css">
     		<script type="text/javascript" src="static/js/c3.min.js"></script>
+			<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.3.min.js') }}"></script>
+			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
+			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/callout.css') }}">
+			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/processing.css') }}">
+			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/bootstrap-switch.min.css') }}">
+			<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+			<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-switch.min.js') }}"></script>
     		<style type="text/css">
+
 				.bar {
 				  fill: steelblue;
 				}
@@ -25,13 +33,179 @@
 				.x.axis path {
 				  display: none;
 				}
+				.bootstrap-switch { height: 2em }
 
+				.uttogglebox{
+					padding-left: 50px;
+				}
+				#asdf{
+				    color: #0000FF;
+				}
+				.bold{
+					font-weight: bold;
+				}
+
+				.page-header{
+					margin: 0 0 21px;
+				}
     		</style>
     	</head>
     
     	<body>
-    		<div id="chart" style="height: 500px"></div>
+    		<div id="fb-root"></div>
+			<script>(function(d, s, id) {
+			  var js, fjs = d.getElementsByTagName(s)[0];
+			  if (d.getElementById(id)) return;
+			  js = d.createElement(s); js.id = id;
+			  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3";
+			  fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+
+
+			</script>
+			<nav class="navbar navbar-default">
+				<div class="container">
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+						<a class="navbar-brand" href="#">SBU Mealpoint Usage Visualizer</a>
+					</div>
+					<ul class="nav navbar-nav navbar-right">
+        				<li><a href="#" data-toggle="modal" data-target="#myModal">Visualize you own account's data</a></li>
+        			</ul>
+					<div id="sm" class="navbar-right" style="padding:10px;">
+						<div class="fb-like" data-href="http://www.hidedatafor.me" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
+
+
+						<a class="twitter-share-button"
+						  href="http://www.hidedatafor.me">
+						Tweet
+						</a>
+						<script>
+						window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
+						</script>
+					</div>
+				</div>
+			</nav>
+			<div class="container everything">
+
+				<div id="myModal" class="modal fade" role="dialog">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				        <h4 class="modal-title">Visualize your own meal point usage</h4>
+				      </div>
+				    <form method="POST" id="submit">
+				      <div class="modal-body">
+				      	<span class="text-primary">Enter the credentials you would use to check your meal point balance on the <a id="asdf" href="https://services.jsatech.com/login.php?cid=129">JSA Tech</a> login page.</span><br><br>
+						<input type= "text" class="form-control" name="username" id="username" placeholder="ID Number"></input><br>
+						<input type= "password" class="form-control" name="password" id="password" placeholder="Password"></input><br>
+						{% if error %}
+						<div class="alert alert-danger" role="alert">
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{error}}
+						</div>
+						{% endif %}
+						<div class="bs-callout bs-callout-primary">
+							<h4>Note</h4>
+							<p>Your login credentials are needed so the site can access your meal point usage history. Neither your login credentials nor any of your data is saved by the server</p>
+						</div>
+						
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				        <button type="submit" class="btn btn-primary" onclick="togglemodals()" >Let's Go!</button>
+					</form>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				<div class="modal fade" role="dialog" id="processing">
+				  <div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h4 class="modal-title">Processing...</h4>
+				      </div>
+				      <div class="modal-body">
+							<center><img src="{{ url_for('static', filename='img/load.gif') }}" alt="loading" width="150px" id="loader"></center>
+				      		<div class="bs-callout bs-callout-primary">
+							<h4>Note</h4>
+								<p>It can take up to a minute to scrape and process your data. Please be patient. Do not refresh your browser window</p>
+							</div>
+				        
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				<div class="page-header">
+				  <h1>{{info[0]}}</h1>
+				</div>
+				<div class="row">
+					<div class="col-md-10">
+						<div class="panel panel-primary">
+						  <div class="panel-heading">Account balance over time</div>
+						  <div class="panel-body">
+						    <div id="chart" style="height: 400px"></div>
+						  </div>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<div class="panel panel-primary">
+						  <div class="panel-heading">Stats</div>
+						  <div class="statsbod">
+							<ul class="list-group">
+								<li class="list-group-item">
+									<span class="text-primary bold">Remaining balance:</span><br>
+									${{info[1]}}
+								</li>
+								<li class="list-group-item">
+									<span class="text-primary bold">Average daily spending:</span><br>
+									${{info[5]}}
+								</li>
+								<li class="list-group-item">
+									<span class="text-primary bold">Most profligate day:</span><br>
+									You spent ${{info[3]}} on {{info[2]}}
+								</li>
+								<li class="list-group-item">
+									<span class="text-primary bold">Largest transaction:</span><br>
+									You spent ${{info[4][2]}} at {{info[4][0]}} from {{info[4][1]}}
+								</li>
+							</ul>
+						  </div>
+						</div>
+
+					</div>
+				</div>
+				<div class="panel panel-primary">
+				  <div class="panel-heading">Daily Usage</div>
+				  <div class="panel-body du"></div>
+				</div>
+
+				<div class="row">
+
+
+					<div class="col-md-6">
+						<div class="panel panel-primary">
+							<div class="panel-heading">Locations</div>
+							<div class="panel-body checkpoint">	
+								<div id="chart2" style="height: 450px"></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+					<div class="panel panel-primary">
+					  <div class="panel-heading">Usage Trends</div>
+					  <div class="panel-body ut">
+					  
+						
+					  </div>
+					</div>
+					</div>
+				</div>
+    			
+    		</div>
     		<script type="text/javascript">
+    			
 				var chart = c3.generate({
 				    data: {
 				        x: 'x',
@@ -42,7 +216,7 @@
 					            	'{{dat[0]}}',
 					            {% endfor %}
 				            ],
-				            ['data1',
+				            ['Balance',
 				            	{% for dat in data %}
 				            		{{dat[3]}},
 				            	{% endfor %}
@@ -58,68 +232,231 @@
             				    multiline: false
 				            }
 				        }
-				    }
+				    },
+				    bindto: "#chart"
+
 				});
-			</script>
-			<script type="text/javascript">
-				daysu = [
-					{% for entry in dateuse %}
-						{date:"{{entry[0]}}",value:{{entry[1]}} },
-					{% endfor %}
-				]
+				var chart2 = c3.generate({
+				    data: {
+				        columns: [
+				        {% for loc in loccost %}
+				            ['{{loc[0]}}', {{loc[1]}}],
+				        {% endfor %}
+				        ],
+				        type : 'donut',
+				    },
+				    donut: {
+				        title: "Locations by $ spent"
+				    },
+				    bindto: "#chart2"
+				});
 
-				var margin = {top: 20, right: 20, bottom: 30, left: 40},
-				    width = 1200 - margin.left - margin.right,
-				    height = 250 - margin.top - margin.bottom;
 
-				var x = d3.scale.ordinal()
-				    .rangeRoundBands([0, width], .1);
 
-				var y = d3.scale.linear()
-				    .range([height, 0]);
+			daysused = [
+				{% for entry in dateuse %}
+					{date:"{{entry[0]}}",value:{{entry[1]}} },
+				{% endfor %}
+			]
 
-				var xAxis = d3.svg.axis()
-				    .scale(x)
-				    .orient("bottom");
+			weekdaysused = [
+				{% for entry in days %}
+					{date:"{{entry[0]}}",value:{{entry[1]}} },
+				{% endfor %}
+			]
 
-				var yAxis = d3.svg.axis()
-				    .scale(y)
-				    .orient("left")
-				    .ticks(10, "");
+			hours = [
+				{% for entry in hours %}
+					{date:"{{entry[0]}}",value:{{entry[1]}} },
+				{% endfor %}
+			]
+		    
+		    var margin = {top: 20, right: 20, bottom: 60, left: 40},
+		        width = $(".du").width() - margin.left - margin.right,
+		        width2 = $(".ut").width() - margin.left - margin.right,
+		        height = 400 - margin.top - margin.bottom;
+		    
+		    var x = d3.scale.ordinal()
+		        .rangeRoundBands([0, width], .1);
+		    
+		    var y = d3.scale.linear()
+		        .range([height, 0]);
 
-				var svg = d3.select("body").append("svg")
-				    .attr("width", width + margin.left + margin.right)
-				    .attr("height", height + margin.top + margin.bottom)
-				  .append("g")
-				    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		    var x2 = d3.scale.ordinal()
+		        .rangeRoundBands([0, width2], .1);
+		    
+		    var y2 = d3.scale.linear()
+		        .range([height, 0]);
+		    
+		    var xAxis = d3.svg.axis()
+		        .scale(x)
+		        .orient("bottom").tickValues(daysused.map( function(d,i) 
+				  { 
+				    if(i % 2 ===0 ) return d.date; 
+				  })
+				    .filter(function (d) 
+				      { return !!d; } ));
+		    
+		    var yAxis = d3.svg.axis()
+		        .scale(y)
+		        .orient("left")
+		        .ticks(10, "$");
 
-				  x.domain(daysu.map(function(d) { return d.date; }));
-				  y.domain([0, d3.max(daysu, function(d) { return d.value; })]);
+		    var xAxis2 = d3.svg.axis()
+		        .scale(x2)
+		        .orient("bottom");
+		    
+		    var yAxis2 = d3.svg.axis()
+		        .scale(y2)
+		        .orient("left")
+		        .ticks(10, "$");
+		    
+		    var svg = d3.select(".du").append("svg")
+		        .attr("width", width + margin.left + margin.right)
+		        .attr("height", height + margin.top + margin.bottom)
+		      .append("g")
+		        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-				  svg.append("g")
-				      .attr("class", "x axis")
-				      .attr("transform", "translate(0," + height + ")")
-				      .call(xAxis);
+		    var svg2 = d3.select(".ut").insert("svg")
+		        .attr("width", width2 + margin.left + margin.right)
+		        .attr("height", height + margin.top + margin.bottom)
+		      .append("g")
+		        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-				  svg.append("g")
-				      .attr("class", "y axis")
-				      .call(yAxis)
-				    .append("text")
-				      .attr("transform", "rotate(-90)")
-				      .attr("y", 6)
-				      .attr("dy", ".71em")
-				      .style("text-anchor", "end")
-				      .text("value");
+		      x.domain(daysused.map(function(d) { return d.date; }));
+		      y.domain([0, d3.max(daysused, function(d) { return d.value; })]);
+		      x2.domain(weekdaysused.map(function(d) { return d.date; }));
+		      y2.domain([0, d3.max(weekdaysused, function(d) { return d.value; })]);		      
+		    
+		      svg.append("g")
+		          .attr("class", "x axis")
+		          .attr("transform", "translate(0," + height + ")")
+		          .call(xAxis).selectAll("text")  
+		            .style("text-anchor", "end")
+		            .attr("dx", "-.8em")
+		            .attr("dy", ".15em")
+		            .attr("transform", function(d) {
+		                return "rotate(-65)" 
+		           });
 
-				  svg.selectAll(".bar")
-				      .data(daysu)
-				    .enter().append("rect")
-				      .attr("class", "bar")
-				      .attr("x", function(d) { return x(d.date); })
-				      .attr("width", x.rangeBand())
-				      .attr("y", function(d) { return y(d.value); })
-				      .attr("height", function(d) { return height - y(d.value); });
+		    
+		      svg.append("g")
+		          .attr("class", "y axis")
+		          .call(yAxis)
+		        .append("text")
+		          .attr("transform", "rotate(-90)")
+		          .attr("y", 6)
+		          .attr("dy", ".71em")
+		          .style("text-anchor", "end")
+		          .text("Amount spent");
+		    
+		      svg.selectAll(".bar")
+		      .data(daysused)
+		    .enter().append("rect")
+		      .attr("class", "bar")
+		      .attr("x", function(d) { return x(d.date); })
+		      .attr("width", x.rangeBand())
+		      .attr("y", function(d) { return y(d.value); })
+		      .attr("height", function(d) { return height - y(d.value); });
 
+		      svg2.append("g")
+		          .attr("class", "x axis")
+		          .attr("transform", "translate(0," + height + ")")
+		          .call(xAxis2);
+		    
+		      svg2.append("g")
+		          .attr("class", "y axis")
+		          .call(yAxis2)
+		        .append("text")
+		          .attr("transform", "rotate(-90)")
+		          .attr("y", 6)
+		          .attr("dy", ".71em")
+		          .style("text-anchor", "end")
+		          .text("Amount spent");
+		    
+		      svg2.selectAll(".bar")
+		      .data(weekdaysused)
+		    .enter().append("rect")
+		      .attr("class", "bar")
+		      .attr("x", function(d) { return x2(d.date); })
+		      .attr("width", x2.rangeBand())
+		      .attr("y", function(d) { return y2(d.value); })
+		      .attr("height", function(d) { return height - y2(d.value); });
+
+			var box = d3.select(".ut").append("div").attr("class","uttogglebox")
+			box.append("span").text("Toggle data grouping:")
+			box.append('br')
+			box.append("input")
+				.attr("type","checkbox")
+				.attr("id","uttoggle")
+				.attr("data-off-text","Hours of day")
+				.attr("data-on-text","Days of week")
+				.attr("data-off-color","primary")
+				.attr("data-handle-width","150")
+				.attr("checked",true)		
+
+			$("#uttoggle").bootstrapSwitch()
+			$('#uttoggle').on('switchChange.bootstrapSwitch', function(event, state) {
+			  if (state){
+			  	update(weekdaysused);
+			  }else{
+			  	update(hours);
+			  }
+			});
+
+				function update(datain){
+					var asdf = svg2.selectAll(".bar").data(datain);
+					console.log(asdf.exit());
+					asdf.exit().transition().duration(200).attr("height",0).attr("y",height);
+					asdf.enter().append("rect");
+					
+					x2.domain(datain.map(function(d) { return d.date; }));
+					y2.domain([0, d3.max(datain, function(d) { return d.value; })]);
+					asdf
+						.attr("class","bar")
+						.transition().duration(200)
+						.attr("height",0).attr("y",height)
+					asdf.transition().duration(0).delay(200)
+						.attr("x", function(d) { return x2(d.date); })
+						.attr("width", x2.rangeBand())
+					asdf
+						.transition().duration(200).delay(220)
+						.attr("y", function(d) { return y2(d.value); })
+						.attr("height", function(d) { return height - y2(d.value); });
+
+
+	        svg2.selectAll("g.y.axis")
+	        	.transition().duration(1000)
+	            .call(yAxis2);
+		
+    	    var xax = svg2.selectAll("g.x.axis")
+    	    	.transition().duration(400)
+    	        .call(xAxis2)
+
+    	    xax.selectAll("text")  
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", function(d) {
+                return "rotate(-65)" 
+            });
+
+
+			    }
+
+			    function togglemodals(){
+			    	$("#myModal").modal("toggle");
+			    	$('#processing').modal({
+						backdrop: 'static',
+						keyboard: true
+					});
+			    }
+
+			d3.select(".statsbod").attr("style","height: 430px");
+
+			{% if error %}
+				$('#myModal').modal()
+			{% endif %}
     		</script>
 
     	</body>

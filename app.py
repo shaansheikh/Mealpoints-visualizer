@@ -6,38 +6,56 @@ import time
 import datetime as dt
 
 ##########################################################
-def scrape():
-	
-	##get skey
-	#r = requests.get('https://services.jsatech.com/login.php?cid=129').text
-	#tree = html.fromstring(r)
-	#skey = tree.xpath('//form/input[@name="skey"]/@value')[0]
-	#
-	##login
-	#payload = {"save":"1","skey":skey,"cid":"129","wason":"","loginphrase":"109989123","password":"204c5abb"}
-	#requests.post("https://services.jsatech.com/login.php?cid=129&skey=" + skey,data=payload)
-	#requests.get("https://services.jsatech.com/login.php?skey="+skey+"&cid=129&fullscreen=1&wason=")
-	#
-	#time.sleep(20)
-	#
-	##get history
-	#payload = {"save":"1","skey":skey,"cid":"129","acctto":"3","month":"13"}
-	#r = requests.post("https://services.jsatech.com/statement.php?cid=129&skey=" + skey,data=payload).text
-
+def readsaved():
 	f = open('file.html', 'r')
 	r = f.read()
 	f.close()
 
+	return r
+
+
+def scrape(login,passwd):
+	#get skey
+	r = requests.get('https://services.jsatech.com/login.php?cid=129').text
 	tree = html.fromstring(r)
-	data = tree.xpath('//table[@class="boxoutside"]//td/text()')
-	return [data[x: x+4] for x in xrange(0, len(data), 4)]
+	skey = tree.xpath('//form/input[@name="skey"]/@value')[0]
+
+	#login
+	payload = {"save":"1","skey":skey,"cid":"129","wason":"","loginphrase":login,"password":passwd}
+	requests.post("https://services.jsatech.com/login.php?cid=129&skey=" + skey,data=payload)
+	requests.get("https://services.jsatech.com/login.php?skey="+skey+"&cid=129&fullscreen=1&wason=")
+	
+	time.sleep(20)
+	
+	#get history
+	payload = {"save":"1","skey":skey,"cid":"129","acctto":"3","month":"13"}
+	r = requests.post("https://services.jsatech.com/statement.php?cid=129&skey=" + skey,data=payload).text
+
+	return r
+
 
 app = Flask(__name__)
 
-@app.route('/')
-@app.route('/home')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-	data = scrape()
+	r = readsaved()
+	error = ""
+	if request.method == 'POST':
+		r = scrape(request.form['username'],request.form['password'])
+		if len(r) == 0:
+			r = readsaved()
+			error = "Could not access any data. Double check your credentials."
+
+	tree = html.fromstring(r)
+	data = tree.xpath('//table[@class="boxoutside"]//td/text()')
+	data = [data[x: x+4] for x in xrange(0, len(data), 4)]
+
+
+	info = [""]*6
+
+	info[0] = tree.xpath('//table[@summary="Customer Information"]//b/text()')[0]
+	info[1] = data[-1][-1]
+
 
 	for x in xrange(len(data)):
 		data[x][3] = data[x][3].replace(",","")
@@ -50,13 +68,37 @@ def index():
 	table = [[begindt + dt.timedelta(x),0.0] for x in range(timespan+1)]
 
 	days = [["Sunday",0.0],["Monday",0.0],["Tuesday",0.0],["Wednesday",0.0],["Thursday",0.0],["Friday",0.0],["Saturday",0.0]]
-	hours = [ [x,0.0] for x in range(24)]
+	hours = [0.0]*24
 
+	locCosts = [["West Side Dining",0.0],["SAC",0.0],["Roth",0.0],["Union",0.0],["Wang Center",0.0],["Unknown",0.0]]
+	locFreq = [["West Side Dining",0],["SAC",0],["Roth",0],["Union",0],["Wang Center",0],["Unknown",0]]
 
 	for datum in data:
 		currdt = dt.datetime.strptime(datum[0],"%m/%d %I:%M %p").replace(year=2015)
 		days[(currdt.weekday()+1)%7][1] = days[(currdt.weekday()+1)%7][1] - float(datum[2])
-		hours[currdt.hour][1] = hours[currdt.hour][1] - float(datum[2])
+		hours[currdt.hour] = hours[currdt.hour] - float(datum[2])
+
+		place = datum[1]
+
+		if place[:3].lower() == "wsd":
+			locCosts[0][1] = locCosts[0][1] - float(datum[2])
+			locFreq[0][1] = locFreq[0][1] + 1
+		elif place[:3].lower() == "sac":
+			locCosts[1][1] = locCosts[1][1] - float(datum[2])
+			locFreq[1][1] = locFreq[1][1] + 1
+		elif place[:4].lower() == "deli" or place[:5].lower() == "union":
+			locCosts[3][1] = locCosts[3][1] - float(datum[2])
+			locFreq[3][1] = locFreq[3][1] + 1
+		elif place[:7].lower() == "jasmine":
+			locCosts[4][1] = locCosts[4][1] - float(datum[2])
+			locFreq[4][1] = locFreq[4][1] + 1
+		elif place[:6].lower() == "wendys" or place[:4].lower() == "roth" or place[:9].lower() == "s3 fusion" or place[:5].lower() == "red m":
+			locCosts[2][1] = locCosts[2][1] - float(datum[2])
+			locFreq[2][1] = locFreq[2][1] + 1
+		else:
+			locCosts[5][1] = locCosts[5][1] - float(datum[2])
+			locFreq[5][1] = locFreq[5][1] + 1
+
 		loop = True
 		i = 0
 		while (loop and i<len(table)):
@@ -65,19 +107,28 @@ def index():
 				loop = False
 			i = i+1
 
+	maxday = max(table, key=lambda x : x[1])
+	info[2] = maxday[0].strftime("%A, %B %d")
+	info[3] = '%.2f' % maxday[1]
+
+	maxtrans =  max(data, key=lambda x: -1*float(x[2]))[:-1]
+	while (maxtrans[1][-1].isdigit()):
+		maxtrans[1] = maxtrans[1][:-1]
+	maxtrans[0] = dt.datetime.strptime(maxtrans[0],"%m/%d %I:%M %p").strftime("%I:%M %p on %m/%d")
+	maxtrans[2] = -1*float(maxtrans[2])
+	info[4] = maxtrans
+	justspent = [x[1] for x in table]
+	info[5] = '%.2f' % ((sum(justspent)*1.0)/len(justspent))
+
+	print info
+
+	hourtimes = [str((x-1)%12 + 1)+y for y in [" AM"," PM"] for x in range(12)]
+	hours = zip(hourtimes,hours)
 
 	dateuse = [[tab[0].strftime("%m/%d"),int(tab[1]*1000)/1000.0] for tab in table]
 
-	return render_template("page.html",data=data,dateuse=dateuse)
+	return render_template("page.html",data=data,dateuse=dateuse,days=days,hours=hours,loccost=locCosts,info=info,error=error)
 
-@app.route('/d3')
-def d3():
-	return render_template("d3test.html")
-
-@app.route('/<filename>')
-def getfile(filename):
-	return send_from_directory('.',
-                               filename)
 
 def main():
 	app.debug = True
