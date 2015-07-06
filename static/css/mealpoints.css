@@ -1,0 +1,58 @@
+body{
+				background-color: #FAFAFA;
+}
+.bar {
+  fill: steelblue;
+}
+.bar:hover {
+  fill: brown;
+}
+.axis {
+  font: 10px sans-serif;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.x.axis path {
+  display: none;
+}
+.bootstrap-switch { height: 2em }
+.uttogglebox{
+	padding-left: 50px;
+}
+#asdf{
+    color: #0000FF;
+}
+.bold{
+	font-weight: bold;
+}
+.page-header{
+	margin: 0 0 21px;
+}
+
+.panel-heading a:after {
+    font-family:'Glyphicons Halflings';
+    content:"\e114";
+    float: right;
+    color: white;
+}
+.panel-heading a.collapsed:after {
+    content:"\e080";
+}
+.site-footer, .page-wrap:after {
+  /* .push must be the same height as footer */
+	height: 7em; 
+}
+.site-footer {
+  background: #333333;
+  line-height: 7em;
+  color: white;
+  font-size: 1em;
+}
+.panel{
+	box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+	border: 0px;
+}

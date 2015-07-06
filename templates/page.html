@@ -10,45 +10,9 @@
 			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/bootstrap-switch.min.css') }}">
 			<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 			<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-switch.min.js') }}"></script>
-    		<style type="text/css">
-
-				.bar {
-				  fill: steelblue;
-				}
-
-				.bar:hover {
-				  fill: brown;
-				}
-
-				.axis {
-				  font: 10px sans-serif;
-				}
-				.axis path,
-				.axis line {
-				  fill: none;
-				  stroke: #000;
-				  shape-rendering: crispEdges;
-				}
-
-				.x.axis path {
-				  display: none;
-				}
-				.bootstrap-switch { height: 2em }
-
-				.uttogglebox{
-					padding-left: 50px;
-				}
-				#asdf{
-				    color: #0000FF;
-				}
-				.bold{
-					font-weight: bold;
-				}
-
-				.page-header{
-					margin: 0 0 21px;
-				}
+			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/mealpoints.css') }}">
     		</style>
+    		<title>SBU Mealpoint Usage Visualizer</title>
     	</head>
     
     	<body>
@@ -73,11 +37,11 @@
         				<li><a href="#" data-toggle="modal" data-target="#myModal">Visualize you own account's data</a></li>
         			</ul>
 					<div id="sm" class="navbar-right" style="padding:10px;">
-						<div class="fb-like" data-href="http://www.hidedatafor.me" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
+						<div class="fb-like" data-href="http://mealpointvis.herokuapp.com" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
 
 
 						<a class="twitter-share-button"
-						  href="http://www.hidedatafor.me">
+						  href="http://mealpointvis.herokuapp.com">
 						Tweet
 						</a>
 						<script>
@@ -202,12 +166,50 @@
 					</div>
 					</div>
 				</div>
-    			
+
+				<div class="panel panel-primary" id="panel2">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-target="#collapseTwo" href="#collapseTwo" class="collapsed">
+								Transaction History (click to expand)
+							</a>
+						</h4>
+
+					</div>
+					<div id="collapseTwo" class="panel-collapse collapse">
+						<div class="panel-body" style="padding: 0;">
+							<table class="table table-striped table-hover " style="margin-bottom:0;">
+							  <thead>
+							    <tr>
+							      <th>Time</th>
+							      <th>Location</th>
+							      <th>Amount Spent</th>
+							      <th>Balance Remaining</th>
+							    </tr>
+							  </thead>
+							  <tbody>
+							  	{% for datum in data %}
+							    <tr>
+							      <td>{{datum[0]}}</td>
+							      <td>{{datum[1]}}</td>
+							      <td>{{datum[2]}}</td>
+							      <td>{{datum[3]}}</td>
+							    </tr>
+							    {% endfor %}
+							  </tbody>
+							</table>
+
+						</div>
+					</div>
+				</div>
     		</div>
+				<footer class="site-footer">
+					<div class="container everything">Created by Shaan Sheikh | View project on <a href="https://github.com/shaansheikh/Mealpoints-visualizer" style="">githib</a></div>
+				</footer>
     		<script type="text/javascript">
     			
 				var chart = c3.generate({
-				    data: {
+					data: {
 				        x: 'x',
 				        xFormat: '%m/%d %I:%M %p', // 'xFormat' can be used as custom format of 'x'
 				        columns: [

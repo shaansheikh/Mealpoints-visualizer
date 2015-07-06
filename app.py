@@ -38,17 +38,24 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-	r = readsaved()
-	error = ""
+	error= ""
+
 	if request.method == 'POST':
 		r = scrape(request.form['username'],request.form['password'])
-		if len(r) == 0:
+		tree = html.fromstring(r)
+		data = tree.xpath('//table[@class="boxoutside"]//td/text()')
+		data = [data[x: x+4] for x in xrange(0, len(data), 4)]
+		if len(data) == 0:
 			r = readsaved()
+			tree = html.fromstring(r)
+			data = tree.xpath('//table[@class="boxoutside"]//td/text()')
+			data = [data[x: x+4] for x in xrange(0, len(data), 4)]
 			error = "Could not access any data. Double check your credentials."
-
-	tree = html.fromstring(r)
-	data = tree.xpath('//table[@class="boxoutside"]//td/text()')
-	data = [data[x: x+4] for x in xrange(0, len(data), 4)]
+	else:
+		r = readsaved()
+		tree = html.fromstring(r)
+		data = tree.xpath('//table[@class="boxoutside"]//td/text()')
+		data = [data[x: x+4] for x in xrange(0, len(data), 4)]
 
 
 	info = [""]*6
@@ -120,8 +127,6 @@ def index():
 	justspent = [x[1] for x in table]
 	info[5] = '%.2f' % ((sum(justspent)*1.0)/len(justspent))
 
-	print info
-
 	hourtimes = [str((x-1)%12 + 1)+y for y in [" AM"," PM"] for x in range(12)]
 	hours = zip(hourtimes,hours)
 
@@ -138,3 +143,5 @@ def main():
 if __name__ == '__main__':
 	main()
 	pass
+
+app.secret_key="A0Zr98j/3yX R~XHH!jmN]LWX/,?RT"

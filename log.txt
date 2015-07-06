@@ -1,0 +1,45 @@
+2015-07-06 00:33:58 [3200] [INFO] Starting gunicorn 19.0.0
+2015-07-06 00:33:58 [3200] [INFO] Listening at: http://127.0.0.1:8000 (3200)
+2015-07-06 00:33:58 [3200] [INFO] Using worker: sync
+2015-07-06 00:33:58 [3205] [INFO] Booting worker with pid: 3205
+2015-07-06 00:34:00 [3200] [INFO] Handling signal: int
+2015-07-06 00:34:00 [3205] [INFO] Worker exiting (pid: 3205)
+2015-07-06 00:34:00 [3200] [INFO] Shutting down: Master
+2015-07-06 00:34:06 [3208] [INFO] Starting gunicorn 19.0.0
+2015-07-06 00:34:06 [3208] [INFO] Listening at: http://127.0.0.1:8000 (3208)
+2015-07-06 00:34:06 [3208] [INFO] Using worker: sync
+2015-07-06 00:34:06 [3213] [INFO] Booting worker with pid: 3213
+2015-07-06 00:35:05 [3208] [INFO] Handling signal: int
+2015-07-06 00:35:05 [3213] [INFO] Worker exiting (pid: 3213)
+2015-07-06 00:35:05 [3208] [INFO] Shutting down: Master
+2015-07-06 00:36:39 [3292] [INFO] Starting gunicorn 19.0.0
+2015-07-06 00:36:39 [3292] [INFO] Listening at: http://127.0.0.1:8000 (3292)
+2015-07-06 00:36:39 [3292] [INFO] Using worker: sync
+2015-07-06 00:36:39 [3297] [INFO] Booting worker with pid: 3297
+2015-07-06 00:37:20 [3292] [CRITICAL] WORKER TIMEOUT (pid:3297)
+2015-07-06 00:37:20 [3297] [INFO] Worker exiting (pid: 3297)
+2015-07-06 00:37:20 [3318] [INFO] Booting worker with pid: 3318
+2015-07-06 00:37:48 [3292] [INFO] Handling signal: int
+2015-07-06 00:37:48 [3318] [INFO] Worker exiting (pid: 3318)
+2015-07-06 00:37:55 [3292] [INFO] Shutting down: Master
+2015-07-06 00:42:02 [3525] [INFO] Starting gunicorn 19.0.0
+2015-07-06 00:42:02 [3525] [INFO] Listening at: http://127.0.0.1:8000 (3525)
+2015-07-06 00:42:02 [3525] [INFO] Using worker: sync
+2015-07-06 00:42:02 [3530] [INFO] Booting worker with pid: 3530
+2015-07-06 00:42:31 [3525] [INFO] Handling signal: int
+2015-07-06 00:42:31 [3530] [INFO] Worker exiting (pid: 3530)
+2015-07-06 00:42:31 [3525] [INFO] Shutting down: Master
+2015-07-06 03:00:41 [5905] [INFO] Starting gunicorn 19.0.0
+2015-07-06 03:00:41 [5905] [INFO] Listening at: http://127.0.0.1:8000 (5905)
+2015-07-06 03:00:41 [5905] [INFO] Using worker: sync
+2015-07-06 03:00:41 [5910] [INFO] Booting worker with pid: 5910
+2015-07-06 03:02:21 [5910] [INFO] Worker exiting (pid: 5910)
+2015-07-06 03:02:21 [5905] [INFO] Handling signal: int
+2015-07-06 03:02:21 [5905] [INFO] Shutting down: Master
+2015-07-06 03:03:02 [6005] [INFO] Starting gunicorn 19.0.0
+2015-07-06 03:03:02 [6005] [INFO] Listening at: http://127.0.0.1:8000 (6005)
+2015-07-06 03:03:02 [6005] [INFO] Using worker: sync
+2015-07-06 03:03:02 [6010] [INFO] Booting worker with pid: 6010
+2015-07-06 04:01:55 [6010] [INFO] Worker exiting (pid: 6010)
+2015-07-06 04:01:55 [6005] [INFO] Handling signal: int
+2015-07-06 04:01:55 [6005] [INFO] Shutting down: Master
