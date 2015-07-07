@@ -65,3 +65,6 @@ body{
 textarea{
   resize: none;
 }
+.bs-callout{
+  margin: 0px 0px;
+}

@@ -119,8 +119,8 @@ def index():
 		days = [["Sunday",0.0],["Monday",0.0],["Tuesday",0.0],["Wednesday",0.0],["Thursday",0.0],["Friday",0.0],["Saturday",0.0]]
 		hours = [0.0]*24
 
-		locCosts = [["West Side Dining",0.0],["SAC",0.0],["Roth",0.0],["Union",0.0],["Wang Center",0.0],["Unknown",0.0]]
-		locFreq = [["West Side Dining",0],["SAC",0],["Roth",0],["Union",0],["Wang Center",0],["Unknown",0]]
+		locCosts = [["West Side Dining",0.0],["SAC",0.0],["Roth",0.0],["Union",0.0],["Wang Center",0.0],["Tabler",0.0],["Unknown",0.0]]
+		locFreq = [["West Side Dining",0],["SAC",0],["Roth",0],["Union",0],["Wang Center",0],["Tabler",0],["Unknown",0]]
 
 		for datum in data:
 			currdt = dt.datetime.strptime(datum[0],"%m/%d %I:%M %p").replace(year=2015)
@@ -144,9 +144,16 @@ def index():
 			elif place[:6].lower() == "wendys" or place[:4].lower() == "roth" or place[:9].lower() == "s3 fusion" or place[:5].lower() == "red m":
 				locCosts[2][1] = locCosts[2][1] - float(datum[2])
 				locFreq[2][1] = locFreq[2][1] + 1
-			else:
+			elif place[:6].lower() == "dunkin":
 				locCosts[5][1] = locCosts[5][1] - float(datum[2])
 				locFreq[5][1] = locFreq[5][1] + 1
+			elif place[:20].lower() == "online deposit (jsa)":
+				pass
+			else:
+				print datum
+				locCosts[6][1] = locCosts[6][1] - float(datum[2])
+				locFreq[6][1] = locFreq[6][1] + 1
+
 
 			loop = True
 			i = 0

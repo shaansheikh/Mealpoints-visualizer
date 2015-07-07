@@ -12,10 +12,10 @@
 			<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-switch.min.js') }}"></script>
 			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/mealpoints.css') }}">
 			</style>
-			<title>SBU Mealpoint Usage Visualizer</title>
+			<title>SBU Meal Point Usage Visualizer</title>
 			<meta name="description" content="A tool that visualizes your SBU meal plan account usage in various cool interactive graphs." />
 			<meta property="og:description" content="A tool that visualizes your SBU meal plan account usage in various cool interactive graphs." />
-			<meta property="og:title" content="SBU Mealpoint Usage Visualizer" />
+			<meta property="og:title" content="SBU Meal Point Usage Visualizer" />
 			<meta property="og:type"   content="website" /> 
 			<meta property="fb:admins" content="100000129250033" />
 			<meta property="og:image" content="http://mealpointvis.herokuapp.com/static/img/preview.png" />
@@ -38,7 +38,7 @@
 				<div class="container">
 					<!-- Brand and toggle get grouped for better mobile display -->
 					<div class="navbar-header">
-						<a class="navbar-brand" href="#">SBU Mealpoint Usage Visualizer</a>
+						<a class="navbar-brand" href="#">SBU Meal Point Usage Visualizer</a>
 					</div>
 					<ul class="nav navbar-nav navbar-right">
         				<li><a href="#" data-toggle="modal" data-target="#myModal">Visualize you own account's data</a></li>
@@ -98,7 +98,7 @@
 											{% endif %}
 											<div class="bs-callout bs-callout-primary">
 												<h4>Note</h4>
-												<p>Your login credentials are needed so the site can access your meal point usage history. Neither your login credentials nor any of your data is saved by the server</p>
+												<p>Your login credentials are needed so the site can access your meal point usage history. Neither your login credentials nor any of your data is saved by the server. We recommend this method because it less prone to error and more convenient for you. You should use method 2 if you are on a public network.</p>
 											</div>
 										</div>
 
@@ -112,12 +112,12 @@
 											</ol>
 
 										
-											<textarea class="form-control" rows="12" id="comment" name="comment"
+											<textarea class="form-control" rows="14" id="comment" name="comment"
 											placeholder="Example:
 2/01 12:05 AM	WSD Grab N Go36	-6.65	1,501.87
 2/01 01:55 AM	WSD Grab N Go36	-3.70	1,498.17
 2/01 06:44 PM	WSD Bob's BBQ Kelly 05	-4.35	1,493.82
-..."></textarea><br/>
+..."></textarea>
 											{% if side == "2" %}
 												{% if error %}
 												<div class="alert alert-danger" role="alert">
