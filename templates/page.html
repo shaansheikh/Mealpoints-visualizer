@@ -1,8 +1,8 @@
-    <html>
-    	<head>
-    		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
-    		<link rel = "stylesheet" href = "static/css/c3.min.css">
-    		<script type="text/javascript" src="static/js/c3.min.js"></script>
+	<html>
+		<head>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+			<link rel = "stylesheet" href = "static/css/c3.min.css">
+			<script type="text/javascript" src="static/js/c3.min.js"></script>
 			<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.1.3.min.js') }}"></script>
 			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
 			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/callout.css') }}">
@@ -11,19 +11,19 @@
 			<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 			<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-switch.min.js') }}"></script>
 			<link rel = "stylesheet" href = "{{ url_for('static', filename='css/mealpoints.css') }}">
-    		</style>
-    		<title>SBU Mealpoint Usage Visualizer</title>
-    		<meta name="description" content="A tool that visualizes your SBU meal plan account usage in various cool interactive graphs." />
-    		<meta property="og:description" content="A tool that visualizes your SBU meal plan account usage in various cool interactive graphs." />
-    		<meta property="og:title" content="SBU Mealpoint Usage Visualizer" />
-    		<meta property="og:type"   content="website" /> 
-    		<meta property="fb:admins" content="100000129250033" />
+			</style>
+			<title>SBU Mealpoint Usage Visualizer</title>
+			<meta name="description" content="A tool that visualizes your SBU meal plan account usage in various cool interactive graphs." />
+			<meta property="og:description" content="A tool that visualizes your SBU meal plan account usage in various cool interactive graphs." />
+			<meta property="og:title" content="SBU Mealpoint Usage Visualizer" />
+			<meta property="og:type"   content="website" /> 
+			<meta property="fb:admins" content="100000129250033" />
 			<meta property="og:image" content="http://mealpointvis.herokuapp.com/static/img/preview.png" />
 			<meta property="og:url" content="http://mealpointvis.herokuapp.com" />
-    	</head>
-    
-    	<body>
-    		<div id="fb-root"></div>
+		</head>
+	
+		<body>
+			<div id="fb-root"></div>
 			<script>(function(d, s, id) {
 			  var js, fjs = d.getElementsByTagName(s)[0];
 			  if (d.getElementById(id)) return;
@@ -54,44 +54,89 @@
 						<script>
 						window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
 						</script>
+						<iframe src="https://ghbtns.com/github-btn.html?user=shaansheikh&repo=Mealpoints-visualizer&type=star&count=true" frameborder="0" scrolling="0" width="80px" height="18px"></iframe>
 					</div>
 				</div>
 			</nav>
 			<div class="container everything">
 
 				<div id="myModal" class="modal fade" role="dialog">
-				  <div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				        <h4 class="modal-title">Visualize your own meal point usage</h4>
-				      </div>
-				    <form method="POST" id="submit">
-				      <div class="modal-body">
-				      	<span class="text-primary">Enter the credentials you would use to check your meal point balance on the <a id="asdf" href="https://services.jsatech.com/login.php?cid=129">JSA Tech</a> login page.</span><br><br>
-						<input type= "text" class="form-control" name="username" id="username" placeholder="ID Number"></input><br>
-						<input type= "password" class="form-control" name="password" id="password" placeholder="Password"></input><br>
-						{% if error %}
-						<div class="alert alert-danger" role="alert">
-							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{error}}
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title">Visualize your own meal point usage{{error}}{{side}}</h4>
+							</div>
+					
+							<form method="POST" id="submit">
+								<div class="modal-body">
+									<div class="row outerbox">
+
+
+										{% if side == "0" %}
+											{% if error %}
+										
+											<div class="alert alert-danger" role="alert">
+												<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{error}}
+											</div>
+											{% endif %}
+										{% endif %}
+										<div class="col-xs-6 side">
+											<div style="margin-bottom: 10px;"><span class="text-primary bold">Automatically pull data (recommended)</span></div>
+											
+
+											<span class="text-primary">Enter the credentials you would use to check your meal point balance on the <a id="asdf" href="https://services.jsatech.com/statement.php?cid=129&acctto=3">JSA Tech login page.</a> Our server will take care of the rest and automatically pull your data from your account.</span><br><br>
+											<input type= "text" class="form-control" name="username" id="username" placeholder="ID Number"></input><br>
+											<input type= "password" class="form-control" name="password" id="password" placeholder="Password"></input><br>
+											{% if side == "1" %}
+												{% if error %}
+												<div class="alert alert-danger" role="alert">
+													<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{error}}
+												</div>
+												{% endif %}
+											{% endif %}
+											<div class="bs-callout bs-callout-primary">
+												<h4>Note</h4>
+												<p>Your login credentials are needed so the site can access your meal point usage history. Neither your login credentials nor any of your data is saved by the server</p>
+											</div>
+										</div>
+
+										<div class="col-xs-6 ">
+											<div style="margin-bottom: 10px;"><span class="text-primary bold">Manually copy + paste data</span></div>
+											<ol class="text-primary">
+												<li>Login to your JSA Tech account <a id="asdf" target="_blank" href="https://services.jsatech.com/statement.php?cid=129&acctto=3">here</a></li>
+												<li>In the "Month:" dropdown, select "last six months", then click "view"</li>
+												<li>Copy and paste the table into the box below</li>
+											</ol>
+
+										
+											<textarea class="form-control" rows="12" id="comment" name="comment"
+											placeholder="Example:
+2/01 12:05 AM	WSD Grab N Go36	-6.65	1,501.87
+2/01 01:55 AM	WSD Grab N Go36	-3.70	1,498.17
+2/01 06:44 PM	WSD Bob's BBQ Kelly 05	-4.35	1,493.82
+..."></textarea><br/>
+											{% if side == "2" %}
+												{% if error %}
+												<div class="alert alert-danger" role="alert">
+													<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{error}}
+												</div>
+												{% endif %}
+											{% endif %}
+										</div>
+									</div>
+							
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+									<button type="submit" class="btn btn-primary" onclick="togglemodals()" >Let's Go!</button>
+								</div>
+							</form>
 						</div>
-						{% endif %}
-						<div class="bs-callout bs-callout-primary">
-							<h4>Note</h4>
-							<p>Your login credentials are needed so the site can access your meal point usage history. Neither your login credentials nor any of your data is saved by the server</p>
-						</div>
-						
-				      </div>
-				      <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				        <button type="submit" class="btn btn-primary" onclick="togglemodals()" >Let's Go!</button>
-					</form>
-				      </div>
-				    </div>
-				  </div>
+					</div>
 				</div>
 				<div class="modal fade" role="dialog" id="processing">
-				  <div class="modal-dialog">
+				  <div class="modal-dialog modal-sm">
 				    <div class="modal-content">
 				      <div class="modal-header">
 				        <h4 class="modal-title">Processing...</h4>
@@ -107,6 +152,15 @@
 				    </div>
 				  </div>
 				</div>
+				{% with messages = get_flashed_messages(with_categories=true) %}
+					{% if messages %}
+						{% for message in messages %}
+							<div class="alert alert-danger" role="alert">
+								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{message[1]}}
+							</div>    
+						{% endfor %}
+					{% endif %}
+				{% endwith %}
 				<div class="page-header">
 				  <h1>{{info[0]}}
 				  {% if info[0]  == "John Doe" %}
@@ -419,7 +473,6 @@
 
 				function update(datain){
 					var asdf = svg2.selectAll(".bar").data(datain);
-					console.log(asdf.exit());
 					asdf.exit().transition().duration(200).attr("height",0).attr("y",height);
 					asdf.enter().append("rect");
 					
@@ -467,12 +520,36 @@
 
 			d3.select(".statsbod").attr("style","height: 430px");
 
+			$("#username").change(function(){
+				if ($("#username").val() == "" && $("#password").val() == "") {document.getElementById("comment").disabled = false;}
+				else{
+					document.getElementById("comment").disabled = true;
+				}
+				
+			});
+			$("#password").change(function(){
+				if ($("#username").val() == "" && $("#password").val() == "") {document.getElementById("comment").disabled = false;}
+				else{
+					document.getElementById("comment").disabled = true;
+				}
+				
+			});
+			$("#comment").change(function(){
+				if ($("#comment").val() == "") {
+					document.getElementById("username").disabled = false;
+					document.getElementById("password").disabled = false;
+				}
+				else{
+					document.getElementById("username").disabled = true;
+					document.getElementById("password").disabled = true;
+				}
+				
+			});
+
 			{% if error %}
 				$('#myModal').modal()
 			{% endif %}
-    		</script>
 
-    		<script>
 			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
