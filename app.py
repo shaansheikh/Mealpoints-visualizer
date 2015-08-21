@@ -192,7 +192,7 @@ def index():
 
 def main():
 	app.debug = True
-	app.run(host='0.0.0.0', port=80)
+	app.run(host='127.0.0.1', port=7000)
 	print session
 
 if __name__ == '__main__':
