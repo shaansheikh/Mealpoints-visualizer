@@ -64,6 +64,7 @@ def index():
 			globaltree = tree
 			data = tree.xpath('//table[@class="boxoutside"]//td/text()')
 			data = [data[x: x+4] for x in xrange(0, len(data), 4)]
+			print data
 			scraped = 1
 			if len(data) == 0:
 				data = defaultdata()
@@ -90,7 +91,7 @@ def index():
 		data = defaultdata()
 		scraped = 0
 
-	info = [""]*6
+	info = [""]*7
 
 	info[0] = "Unknown Name"
 	if scraped < 2:
@@ -100,30 +101,43 @@ def index():
 
 
 
-
 	for x in xrange(len(data)):
 		if len(data[x]) == 4:
 			data[x][3] = data[x][3].replace(",","")
+			data[x][2] = data[x][2].replace(",","")
 
-	data = [x for x in data if len(x)==4]
+	if scraped==1:
+		data = [x for x in data if len(x)==4 and x[0][0]=='8']
+	else:
+		data = [x for x in data if len(x)==4]
 
-	try:
-		enddt = dt.datetime.strptime(data[-1][0][:data[-1][0].index(" ")],"%m/%d").replace(year=2015)
-		begindt = dt.datetime.strptime(data[0][0][:data[0][0].index(" ")],"%m/%d").replace(year=2015)
+	#try:
+	enddt = dt.datetime.strptime(data[-1][0][:data[-1][0].index(" ")],"%m/%d").replace(year=dt.datetime.now().year)
+	while (enddt > dt.datetime.now()):
+		enddt = enddt.replace(year = enddt.year-1)
+	begindt = dt.datetime.strptime(data[0][0][:data[0][0].index(" ")],"%m/%d").replace(year=dt.datetime.now().year)
+	while (begindt > enddt):
+		begindt = begindt.replace(year = begindt.year-1)
 
+	timespan = (enddt - begindt).days
 
-		timespan = (enddt - begindt).days
+	table = [[begindt + dt.timedelta(x),0.0] for x in range(timespan+1)]
 
-		table = [[begindt + dt.timedelta(x),0.0] for x in range(timespan+1)]
+	days = [["Sunday",0.0],["Monday",0.0],["Tuesday",0.0],["Wednesday",0.0],["Thursday",0.0],["Friday",0.0],["Saturday",0.0]]
+	hours = [0.0]*24
 
-		days = [["Sunday",0.0],["Monday",0.0],["Tuesday",0.0],["Wednesday",0.0],["Thursday",0.0],["Friday",0.0],["Saturday",0.0]]
-		hours = [0.0]*24
+	locCosts = [["West Side Dining",0.0],["SAC",0.0],["Roth",0.0],["Union",0.0],["Wang Center",0.0],["Tabler",0.0],["Unknown",0.0]]
+	locFreq = [["West Side Dining",0],["SAC",0],["Roth",0],["Union",0],["Wang Center",0],["Tabler",0],["Unknown",0]]
 
-		locCosts = [["West Side Dining",0.0],["SAC",0.0],["Roth",0.0],["Union",0.0],["Wang Center",0.0],["Tabler",0.0],["Unknown",0.0]]
-		locFreq = [["West Side Dining",0],["SAC",0],["Roth",0],["Union",0],["Wang Center",0],["Tabler",0],["Unknown",0]]
+	for x in range(len(data)):
+		tempdt = dt.datetime.strptime(data[x][0],"%m/%d %I:%M %p").replace(year=begindt.year)
+		if tempdt < begindt:
+			tempdt = tempdt.replace(year=tempdt.year + 1)
+		data[x][0] = tempdt.strftime("%m/%d/%Y %I:%M %p")
 
-		for datum in data:
-			currdt = dt.datetime.strptime(datum[0],"%m/%d %I:%M %p").replace(year=2015)
+	for datum in data:
+		if float(datum[2]) < 0:
+			currdt = dt.datetime.strptime(datum[0],"%m/%d/%Y %I:%M %p")
 			days[(currdt.weekday()+1)%7][1] = days[(currdt.weekday()+1)%7][1] - float(datum[2])
 			hours[currdt.hour] = hours[currdt.hour] - float(datum[2])
 
@@ -150,7 +164,7 @@ def index():
 			elif place[:20].lower() == "online deposit (jsa)":
 				pass
 			else:
-				print datum
+				
 				locCosts[6][1] = locCosts[6][1] - float(datum[2])
 				locFreq[6][1] = locFreq[6][1] + 1
 
@@ -163,29 +177,28 @@ def index():
 					loop = False
 				i = i+1
 
-		info[1] = data[-1][-1]
+	info[1] = data[-1][-1]
+	maxday = max(table, key=lambda x : x[1])
+	info[2] = maxday[0].strftime("%A, %B %d")
+	info[3] = '%.2f' % maxday[1]
+	maxtrans =  max(data, key=lambda x: -1*float(x[2]))[:-1]
+	while (maxtrans[1][-1].isdigit()):
+		maxtrans[1] = maxtrans[1][:-1]
+	maxtrans[0] = dt.datetime.strptime(maxtrans[0],"%m/%d/%Y %I:%M %p").strftime("%I:%M %p on %m/%d")
+	maxtrans[2] = -1*float(maxtrans[2])
+	info[4] = maxtrans
+	justspent = [x[1] for x in table]
+	exclusivejustspent = [x[1] for x in table if x[1]!=0]
+	
+	info[5] = '%.2f' % ((sum(justspent)*1.0)/len(justspent))
+	info[6] = '%.2f' % ((sum(exclusivejustspent)*1.0)/len(exclusivejustspent))
+	hourtimes = [str((x-1)%12 + 1)+y for y in [" AM"," PM"] for x in range(12)]
+	hours = zip(hourtimes,hours)
 
-		maxday = max(table, key=lambda x : x[1])
-		info[2] = maxday[0].strftime("%A, %B %d")
-		info[3] = '%.2f' % maxday[1]
-
-		maxtrans =  max(data, key=lambda x: -1*float(x[2]))[:-1]
-		while (maxtrans[1][-1].isdigit()):
-			maxtrans[1] = maxtrans[1][:-1]
-		maxtrans[0] = dt.datetime.strptime(maxtrans[0],"%m/%d %I:%M %p").strftime("%I:%M %p on %m/%d")
-		maxtrans[2] = -1*float(maxtrans[2])
-		info[4] = maxtrans
-		justspent = [x[1] for x in table]
-		info[5] = '%.2f' % ((sum(justspent)*1.0)/len(justspent))
-
-		hourtimes = [str((x-1)%12 + 1)+y for y in [" AM"," PM"] for x in range(12)]
-		hours = zip(hourtimes,hours)
-
-		dateuse = [[tab[0].strftime("%m/%d"),int(tab[1]*1000)/1000.0] for tab in table]
-
-	except:
-		flash("An unknown error occured. Please report this bug to shaan.sheikh@stonybrook.edu")
-		return redirect("/")
+	dateuse = [[tab[0].strftime("%m/%d"),int(tab[1]*1000)/1000.0] for tab in table]
+	#except:
+	#	flash("An unknown error occured. Please report this bug to shaan.sheikh@stonybrook.edu")
+	#	return redirect("/")
 
 	return render_template("page.html",data=data,dateuse=dateuse,days=days,hours=hours,loccost=locCosts,info=info,error=error,side=side)
 

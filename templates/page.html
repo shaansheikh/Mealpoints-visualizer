@@ -65,7 +65,7 @@
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-								<h4 class="modal-title">Visualize your own meal point usage{{error}}{{side}}</h4>
+								<h4 class="modal-title">Visualize your own meal point usage</h4>
 							</div>
 					
 							<form method="POST" id="submit">
@@ -193,6 +193,10 @@
 									${{info[5]}}
 								</li>
 								<li class="list-group-item">
+									<span class="text-primary bold">Average daily spending excluding days you spent none:</span><br>
+									${{info[6]}}
+								</li>
+								<li class="list-group-item">
 									<span class="text-primary bold">Most profligate day:</span><br>
 									You spent ${{info[3]}} on {{info[2]}}
 								</li>
@@ -278,7 +282,7 @@
 				var chart = c3.generate({
 					data: {
 				        x: 'x',
-				        xFormat: '%m/%d %I:%M %p', // 'xFormat' can be used as custom format of 'x'
+				        xFormat: '%m/%d/%Y %I:%M %p', // 'xFormat' can be used as custom format of 'x'
 				        columns: [
 				            ['x',
 					            {% for dat in data %}
@@ -296,7 +300,7 @@
 				        x: {
 				            type: 'timeseries',
 				            tick: {
-				                format: '%m/%d %I:%M %p',
+				                format: '%m/%d/%y %I:%M %p',
 				                rotate: 75,
             				    multiline: false
 				            }
