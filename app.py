@@ -155,7 +155,7 @@ def index():
 			elif place[:7].lower() == "jasmine":
 				locCosts[4][1] = locCosts[4][1] - float(datum[2])
 				locFreq[4][1] = locFreq[4][1] + 1
-			elif place[:6].lower() == "wendys" or place[:4].lower() == "roth" or place[:9].lower() == "s3 fusion" or place[:5].lower() == "red m":
+			elif place[:6].lower() == "wendys" or place[:4].lower() == "roth" or place[:9].lower() == "s3 fusion" or place[:5].lower() == "red m"or place[:9].lower() == "market fr":
 				locCosts[2][1] = locCosts[2][1] - float(datum[2])
 				locFreq[2][1] = locFreq[2][1] + 1
 			elif place[:6].lower() == "dunkin":
@@ -164,7 +164,7 @@ def index():
 			elif place[:20].lower() == "online deposit (jsa)":
 				pass
 			else:
-				
+				print place
 				locCosts[6][1] = locCosts[6][1] - float(datum[2])
 				locFreq[6][1] = locFreq[6][1] + 1
 
