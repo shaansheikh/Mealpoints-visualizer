@@ -107,7 +107,7 @@ def index():
 			data[x][2] = data[x][2].replace(",","")
 
 	if scraped==1:
-		data = [x for x in data if len(x)==4 and x[0][0]=='8']
+		data = [x for x in data if len(x)==4 and int(x[0][0])>=8]
 	else:
 		data = [x for x in data if len(x)==4]
 
