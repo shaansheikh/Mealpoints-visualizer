@@ -107,7 +107,7 @@ def index():
 			data[x][2] = data[x][2].replace(",","")
 
 	if scraped==1:
-		data = [x for x in data if len(x)==4 and int(x[0][0])>=8]
+		data = [x for x in data if len(x)==4 and int(x[0][:x[0].find("/")])>=8]
 	else:
 		data = [x for x in data if len(x)==4]
 
@@ -155,7 +155,7 @@ def index():
 			elif place[:7].lower() == "jasmine":
 				locCosts[4][1] = locCosts[4][1] - float(datum[2])
 				locFreq[4][1] = locFreq[4][1] + 1
-			elif place[:6].lower() == "wendys" or place[:4].lower() == "roth" or place[:9].lower() == "s3 fusion" or place[:5].lower() == "red m"or place[:9].lower() == "market fr":
+			elif place[:6].lower() == "wendys" or place[:4].lower() == "roth" or place[:9].lower() == "s3 fusion" or place[:5].lower() == "red m"or place[:9].lower() == "market fr" or place[:9].lower() == "daily dis":
 				locCosts[2][1] = locCosts[2][1] - float(datum[2])
 				locFreq[2][1] = locFreq[2][1] + 1
 			elif place[:6].lower() == "dunkin":
@@ -205,7 +205,7 @@ def index():
 
 def main():
 	app.debug = True
-	app.run(host='127.0.0.1', port=7000)
+	app.run(host='0.0.0.0', port=7000)
 	print session
 
 if __name__ == '__main__':
