@@ -25,10 +25,10 @@ def scrape(login,passwd):
 	requests.post("https://services.jsatech.com/login.php?cid=129&skey=" + skey,data=payload)
 	requests.get("https://services.jsatech.com/login.php?skey="+skey+"&cid=129&fullscreen=1&wason=")
 	
-	time.sleep(20)
+	time.sleep(40)
 	
 	#get history
-	payload = {"save":"1","skey":skey,"cid":"129","acctto":"3","month":"13"}
+	payload = {"save":"1","skey":skey,"cid":"129","acctto":"5","month":"12"}
 	r = requests.post("https://services.jsatech.com/statement.php?cid=129&skey=" + skey,data=payload).text
 
 	return r
@@ -71,6 +71,7 @@ def index():
 				scraped = 0
 				error = "Could not access any data. Double check your credentials."
 				side = "1"
+				return r
 
 		elif (not u and not p and c):
 			data = request.form["comment"] + "\n"
