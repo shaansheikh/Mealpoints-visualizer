@@ -28,7 +28,7 @@ def scrape(login,passwd):
 	time.sleep(20)
 	
 	#get history
-	payload = {"save":"1","skey":skey,"cid":"129","acctto":"5","month":"13"}
+	payload = {"save":"1","skey":skey,"cid":"129","acctto":"3","month":"13"}
 	r = requests.post("https://services.jsatech.com/statement.php?cid=129&skey=" + skey,data=payload).text
 
 	return r
