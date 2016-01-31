@@ -71,7 +71,6 @@ def index():
 				scraped = 0
 				error = "Could not access any data. Double check your credentials."
 				side = "1"
-				return r
 
 		elif (not u and not p and c):
 			data = request.form["comment"] + "\n"
