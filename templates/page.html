@@ -22,6 +22,7 @@
 			<meta property="fb:admins" content="100000129250033" />
 			<meta property="og:image" content="http://mealpointvis.herokuapp.com/static/img/preview.png" />
 			<meta property="og:url" content="http://mealpointvis.herokuapp.com" />
+
 		</head>
 	
 		<body>
@@ -43,8 +44,8 @@
 						<a class="navbar-brand" href="#">SBU Meal Point Usage Visualizer</a>
 					</div>
 					<ul class="nav navbar-nav navbar-right">
-        				<li><a href="#" data-toggle="modal" data-target="#myModal">Visualize you own account's data</a></li>
-        			</ul>
+						<li><a href="#" data-toggle="modal" data-target="#myModal">Visualize you own account's data</a></li>
+					</ul>
 					<div id="sm" class="navbar-right" style="padding:10px;">
 						<div class="fb-like" data-href="http://mealpointvis.herokuapp.com" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
 
@@ -141,19 +142,19 @@
 				</div>
 				<div class="modal fade" role="dialog" id="processing">
 				  <div class="modal-dialog modal-sm">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <h4 class="modal-title">Processing...</h4>
-				      </div>
-				      <div class="modal-body">
+					<div class="modal-content">
+						<div class="modal-header">
+						<h4 class="modal-title">Processing...</h4>
+						</div>
+						<div class="modal-body">
 							<center><img src="{{ url_for('static', filename='img/load.gif') }}" alt="loading" width="150px" id="loader"></center>
-				      		<div class="bs-callout bs-callout-primary">
+								<div class="bs-callout bs-callout-primary">
 							<h4>Note</h4>
 								<p>It can take up to a minute to scrape and process your data. Please be patient. Do not refresh your browser window</p>
 							</div>
-				        
-				      </div>
-				    </div>
+						
+						</div>
+					</div>
 				  </div>
 				</div>
 				{% with messages = get_flashed_messages(with_categories=true) %}
@@ -161,7 +162,7 @@
 						{% for message in messages %}
 							<div class="alert alert-danger" role="alert">
 								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{message[1]}}
-							</div>    
+							</div>	
 						{% endfor %}
 					{% endif %}
 				{% endwith %}
@@ -174,10 +175,10 @@
 				</div>
 				<div class="row">
 					<div class="col-md-10">
-						<div class="panel panel-primary">
+						<div class="panel panel-primary animate">
 						  <div class="panel-heading">Account balance over time</div>
 						  <div class="panel-body">
-						    <div id="chart" style="height: 400px"></div>
+							<div id="chart" style="height: 400px"></div>
 						  </div>
 						</div>
 					</div>
@@ -253,78 +254,77 @@
 						<div class="panel-body" style="padding: 0;">
 							<table class="table table-striped table-hover " style="margin-bottom:0;">
 							  <thead>
-							    <tr>
-							      <th>Time</th>
-							      <th>Location</th>
-							      <th>Amount Spent</th>
-							      <th>Balance Remaining</th>
-							    </tr>
+								<tr>
+									<th>Time</th>
+									<th>Location</th>
+									<th>Amount Spent</th>
+									<th>Balance Remaining</th>
+								</tr>
 							  </thead>
 							  <tbody>
 							  	{% for datum in data %}
-							    <tr>
-							      <td>{{datum[0]}}</td>
-							      <td>{{datum[1]}}</td>
-							      <td>{{datum[2]}}</td>
-							      <td>{{datum[3]}}</td>
-							    </tr>
-							    {% endfor %}
+								<tr>
+									<td>{{datum[0]}}</td>
+									<td>{{datum[1]}}</td>
+									<td>{{datum[2]}}</td>
+									<td>{{datum[3]}}</td>
+								</tr>
+								{% endfor %}
 							  </tbody>
 							</table>
 
 						</div>
 					</div>
 				</div>
-    		</div>
+			</div>
 				<footer class="site-footer">
 					<div class="container everything">Created by <a href="http://www.shaansweb.com">Shaan Sheikh</a> | View project on <a href="https://github.com/shaansheikh/Mealpoints-visualizer" style="">github</a></div>
 				</footer>
-    		<script type="text/javascript">
-				
+			<script type="text/javascript">
 
 				var chart = c3.generate({
 					data: {
-				        x: 'x',
-				        xFormat: '%m/%d/%Y %I:%M %p', // 'xFormat' can be used as custom format of 'x'
-				        columns: [
-				            ['x',
-					            {% for dat in data %}
-					            	'{{dat[0]}}',
-					            {% endfor %}
-				            ],
-				            ['Balance',
-				            	{% for dat in data %}
-				            		{{dat[3]}},
-				            	{% endfor %}
-				            ],
-				        ]
-				    },
-				    axis: {
-				        x: {
-				            type: 'timeseries',
-				            tick: {
-				                format: '%m/%d/%y %I:%M %p',
-				                rotate: 75,
-            				    multiline: false
-				            }
-				        }
-				    },
-				    bindto: "#chart"
+						x: 'x',
+						xFormat: '%m/%d/%Y %I:%M %p', // 'xFormat' can be used as custom format of 'x'
+						columns: [
+							['x',
+								{% for dat in data %}
+									'{{dat[0]}}',
+								{% endfor %}
+							],
+							['Balance',
+								{% for dat in data %}
+									{{dat[3]}},
+								{% endfor %}
+							],
+						]
+					},
+					axis: {
+						x: {
+							type: 'timeseries',
+							tick: {
+								format: '%m/%d/%y %I:%M %p',
+								rotate: 75,
+								multiline: false
+							}
+						}
+					},
+					bindto: "#chart"
 
 				});
 				var chart2 = c3.generate({
-				    data: {
-				        columns: [
-				        {% for loc in loccost %}
-				            ['{{loc[0]}}', {{loc[1]}}],
-				        {% endfor %}
-				        ],
-				        type : 'donut',
-				    },
-				    donut: {
-				        title: "Locations by $ spent"
-				    },
-				    bindto: "#chart2"
+					data: {
+						columns: [
+						{% for loc in loccost %}
+							['{{loc[0]}}', {{loc[1]}}],
+						{% endfor %}
+						],
+						type : 'donut',
+					},
+					donut: {
+						title: "Locations by $ spent"
+					},
+					bindto: "#chart2"
 				});
 
 
@@ -346,118 +346,128 @@
 					{date:"{{entry[0]}}",value:{{entry[1]}} },
 				{% endfor %}
 			]
-		    
-		    var margin = {top: 20, right: 20, bottom: 60, left: 40},
-		        width = $(".du").width() - margin.left - margin.right,
-		        width2 = $(".ut").width() - margin.left - margin.right,
-		        height = 400 - margin.top - margin.bottom;
-		    
-		    var x = d3.scale.ordinal()
-		        .rangeRoundBands([0, width], .1);
-		    
-		    var y = d3.scale.linear()
-		        .range([height, 0]);
+			
+			var margin = {top: 20, right: 20, bottom: 60, left: 40},
+			width = $(".du").width() - margin.left - margin.right,
+			width2 = $(".ut").width() - margin.left - margin.right,
+			height = 400 - margin.top - margin.bottom;
 
-		    var x2 = d3.scale.ordinal()
-		        .rangeRoundBands([0, width2], .1);
-		    
-		    var y2 = d3.scale.linear()
-		        .range([height, 0]);
-		    
-		    var xAxis = d3.svg.axis()
-		        .scale(x)
-		        .orient("bottom").tickValues(daysused.map( function(d,i) 
+
+			
+			var x = d3.scale.ordinal()
+				.rangeRoundBands([0, width], .1);
+			
+			var y = d3.scale.linear()
+				.range([height, 0]);
+
+			var x2 = d3.scale.ordinal()
+				.rangeRoundBands([0, width2], .1);
+			
+			var y2 = d3.scale.linear()
+				.range([height, 0]);
+			
+			var xAxis = d3.svg.axis()
+				.scale(x)
+				.orient("bottom").tickValues(daysused.map( function(d,i) 
 				  { 
-				    if(i % 2 ===0 ) return d.date; 
+					if(i % 2 ===0 ) return d.date; 
 				  })
-				    .filter(function (d) 
-				      { return !!d; } ));
-		    
-		    var yAxis = d3.svg.axis()
-		        .scale(y)
-		        .orient("left")
-		        .ticks(10, "$");
+					.filter(function (d) 
+						{ return !!d; } ));
+			
+			var yAxis = d3.svg.axis()
+				.scale(y)
+				.orient("left")
+				.ticks(10, "$");
 
-		    var xAxis2 = d3.svg.axis()
-		        .scale(x2)
-		        .orient("bottom");
-		    
-		    var yAxis2 = d3.svg.axis()
-		        .scale(y2)
-		        .orient("left")
-		        .ticks(10, "$");
-		    
-		    var svg = d3.select(".du").append("svg")
-		        .attr("width", width + margin.left + margin.right)
-		        .attr("height", height + margin.top + margin.bottom)
-		      .append("g")
-		        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			var xAxis2 = d3.svg.axis()
+				.scale(x2)
+				.orient("bottom");
+			
+			var yAxis2 = d3.svg.axis()
+				.scale(y2)
+				.orient("left")
+				.ticks(10, "$");
+			
+			var svg = d3.select(".du").append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+				.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		    var svg2 = d3.select(".ut").insert("svg")
-		        .attr("width", width2 + margin.left + margin.right)
-		        .attr("height", height + margin.top + margin.bottom)
-		      .append("g")
-		        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			text = svg.append("text").attr("x",width-40).style("visibility","hidden")
 
-		      x.domain(daysused.map(function(d) { return d.date; }));
-		      y.domain([0, d3.max(daysused, function(d) { return d.value; })]);
-		      x2.domain(weekdaysused.map(function(d) { return d.date; }));
-		      y2.domain([0, d3.max(weekdaysused, function(d) { return d.value; })]);		      
-		    
-		      svg.append("g")
-		          .attr("class", "x axis")
-		          .attr("transform", "translate(0," + height + ")")
-		          .call(xAxis).selectAll("text")  
-		            .style("text-anchor", "end")
-		            .attr("dx", "-.8em")
-		            .attr("dy", ".15em")
-		            .attr("transform", function(d) {
-		                return "rotate(-65)" 
-		           });
+			var svg2 = d3.select(".ut").insert("svg")
+				.attr("width", width2 + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+				.append("g")
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			
+			text2 = svg2.append("text").attr("x",width2-60).style("visibility","hidden")
 
-		    
-		      svg.append("g")
-		          .attr("class", "y axis")
-		          .call(yAxis)
-		        .append("text")
-		          .attr("transform", "rotate(-90)")
-		          .attr("y", 6)
-		          .attr("dy", ".71em")
-		          .style("text-anchor", "end")
-		          .text("Amount spent");
-		    
-		      svg.selectAll(".bar")
-		      .data(daysused)
-		    .enter().append("rect")
-		      .attr("class", "bar")
-		      .attr("x", function(d) { return x(d.date); })
-		      .attr("width", x.rangeBand())
-		      .attr("y", function(d) { return y(d.value); })
-		      .attr("height", function(d) { return height - y(d.value); });
+			x.domain(daysused.map(function(d) { return d.date; }));
+			y.domain([0, d3.max(daysused, function(d) { return d.value; })]);
+			x2.domain(weekdaysused.map(function(d) { return d.date; }));
+			y2.domain([0, d3.max(weekdaysused, function(d) { return d.value; })]);				
+			
 
-		      svg2.append("g")
-		          .attr("class", "x axis")
-		          .attr("transform", "translate(0," + height + ")")
-		          .call(xAxis2);
-		    
-		      svg2.append("g")
-		          .attr("class", "y axis")
-		          .call(yAxis2)
-		        .append("text")
-		          .attr("transform", "rotate(-90)")
-		          .attr("y", 6)
-		          .attr("dy", ".71em")
-		          .style("text-anchor", "end")
-		          .text("Amount spent");
-		    
-		      svg2.selectAll(".bar")
-		      .data(weekdaysused)
-		    .enter().append("rect")
-		      .attr("class", "bar")
-		      .attr("x", function(d) { return x2(d.date); })
-		      .attr("width", x2.rangeBand())
-		      .attr("y", function(d) { return y2(d.value); })
-		      .attr("height", function(d) { return height - y2(d.value); });
+
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis).selectAll("text")  
+				.style("text-anchor", "end")
+				.attr("dx", "-.8em")
+				.attr("dy", ".15em")
+				.attr("transform", function(d) {
+					return "rotate(-65)" 
+				});
+
+			
+			svg.append("g")
+				.attr("class", "y axis")
+				.call(yAxis)
+				.append("text")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 6)
+				.attr("dy", ".71em")
+				.style("text-anchor", "end")
+				.text("Amount spent");
+
+
+			
+			svg.selectAll(".bar")
+				.data(daysused)
+				.enter().append("rect")
+				.attr("class", "bar").attr("id","firstchart")
+				.attr("x", function(d) { return x(d.date); })
+				.attr("width", x.rangeBand())
+				.attr("y", function(d) { return y(d.value); })
+				.attr("height", function(d) { return height - y(d.value); });
+
+			svg2.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis2);
+			
+			svg2.append("g")
+				.attr("class", "y axis")
+				.call(yAxis2)
+				.append("text")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 6)
+				.attr("dy", ".71em")
+				.style("text-anchor", "end")
+				.text("Amount spent");
+
+			svg2.selectAll(".bar")
+				.data(weekdaysused)
+				.enter().append("rect")
+				.attr("class", "bar").attr("id","secondchart")
+				.attr("x", function(d) { return x2(d.date); })
+				.attr("width", x2.rangeBand())
+				.attr("y", function(d) { return y2(d.value); })
+				.attr("height", function(d) { return height - y2(d.value); });
 
 			var box = d3.select(".ut").append("div").attr("class","uttogglebox")
 			box.append("span").text("Toggle data grouping:")
@@ -480,52 +490,73 @@
 			  }
 			});
 
-				function update(datain){
-					var asdf = svg2.selectAll(".bar").data(datain);
-					asdf.exit().transition().duration(200).attr("height",0).attr("y",height);
-					asdf.enter().append("rect");
-					
-					x2.domain(datain.map(function(d) { return d.date; }));
-					y2.domain([0, d3.max(datain, function(d) { return d.value; })]);
-					asdf
-						.attr("class","bar")
-						.transition().duration(200)
-						.attr("height",0).attr("y",height)
-					asdf.transition().duration(0).delay(200)
-						.attr("x", function(d) { return x2(d.date); })
-						.attr("width", x2.rangeBand())
-					asdf
-						.transition().duration(200).delay(220)
-						.attr("y", function(d) { return y2(d.value); })
-						.attr("height", function(d) { return height - y2(d.value); });
+			function update(datain){
+				var asdf = svg2.selectAll(".bar").data(datain);
+				asdf.exit().transition().duration(200).attr("height",0).attr("y",height);
+				asdf.enter().append("rect");
+				
+				x2.domain(datain.map(function(d) { return d.date; }));
+				y2.domain([0, d3.max(datain, function(d) { return d.value; })]);
+				asdf
+					.attr("class","bar")
+					.transition().duration(200)
+					.attr("height",0).attr("y",height)
+				asdf.transition().duration(0).delay(200)
+					.attr("x", function(d) { return x2(d.date); })
+					.attr("width", x2.rangeBand())
+				asdf
+					.transition().duration(200).delay(220)
+					.attr("y", function(d) { return y2(d.value); })
+					.attr("height", function(d) { return height - y2(d.value); });
 
 
-	        svg2.selectAll("g.y.axis")
-	        	.transition().duration(1000)
-	            .call(yAxis2);
+
+
+			svg2.selectAll("g.y.axis")
+				.transition().duration(1000)
+				.call(yAxis2);
 		
-    	    var xax = svg2.selectAll("g.x.axis")
-    	    	.transition().duration(400)
-    	        .call(xAxis2)
+			var xax = svg2.selectAll("g.x.axis")
+				.transition().duration(400)
+				.call(xAxis2)
 
-    	    xax.selectAll("text")  
-            .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", function(d) {
-                return "rotate(-65)" 
-            });
+			xax.selectAll("text")  
+			.style("text-anchor", "end")
+			.attr("dx", "-.8em")
+			.attr("dy", ".15em")
+			.attr("transform", function(d) {
+				return "rotate(-65)" 
+			});
 
+			svg2.selectAll("rect")
+				.on("mouseover", function(d, i) {
+					inside2 = 1; 
+					var self = this;
+					d3.select(this).style("opacity","1");
+					
+					svg2.selectAll("rect").filter(function (x) { return self != this; }).style("opacity", "0.4");
+					text2.style("visibility","visible").text("$"+d3.select(this).datum().value.toFixed(2))
+				}).on("mouseout", function(d, i) { 
+					inside2=0;
+					text2.style("visibility","hidden");
+					
+		   			setTimeout(function(d, i) { 
+		   				if (inside2==0){
+							svg2.selectAll("rect").style("opacity", "1");
+						}
+					},10);
+					//d3.selectAll("#firstchart").style("opacity", "1");
+				});
 
-			    }
+				}
 
-			    function togglemodals(){
-			    	$("#myModal").modal("toggle");
-			    	$('#processing').modal({
+				function togglemodals(){
+					$("#myModal").modal("toggle");
+					$('#processing').modal({
 						backdrop: 'static',
 						keyboard: true
 					});
-			    }
+				}
 
 			d3.select(".statsbod").attr("style","height: 430px");
 
@@ -554,6 +585,50 @@
 				}
 				
 			});
+			inside = 0;
+			svg.selectAll("#firstchart")
+				.on("mouseover", function(d, i) {
+					inside = 1; 
+					var self = this;
+					d3.select(this).style("opacity","1");
+					
+					d3.selectAll("#firstchart").filter(function (x) { return self != this; }).style("opacity", "0.4");
+					text.style("visibility","visible").text("$"+d3.select(this).datum().value.toFixed(2))
+				}).on("mouseout", function(d, i) { 
+					inside=0;
+					text.style("visibility","hidden");
+					
+		   			setTimeout(function(d, i) { 
+		   				if (inside==0){
+							d3.selectAll("#firstchart").style("opacity", "1");
+						}
+					},10);
+					//d3.selectAll("#firstchart").style("opacity", "1");
+				});
+
+			inside2 = 0;
+			svg2.selectAll("rect")
+				.on("mouseover", function(d, i) {
+					inside2 = 1; 
+					var self = this;
+					d3.select(this).style("opacity","1");
+					
+					svg2.selectAll("rect").filter(function (x) { return self != this; }).style("opacity", "0.4");
+					text2.style("visibility","visible").text("$"+d3.select(this).datum().value.toFixed(2))
+				}).on("mouseout", function(d, i) { 
+					inside2=0;
+					text2.style("visibility","hidden");
+					
+		   			setTimeout(function(d, i) { 
+		   				if (inside2==0){
+							svg2.selectAll("rect").style("opacity", "1");
+						}
+					},10);
+					//d3.selectAll("#firstchart").style("opacity", "1");
+				});
+
+
+
 
 			{% if error %}
 				$('#myModal').modal()
@@ -569,6 +644,6 @@
 
 			</script>
 
-    	</body>
-    
-    </html>
+		</body>
+	
+	</html>
